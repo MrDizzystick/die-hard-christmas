@@ -68,7 +68,10 @@ def main():
     webroot = os.path.join(this_addon_path, "resources", "web")
     webapp_template_lookup = TemplateLookup(directories=[os.path.join(webroot, "templates")])
 
-    wifi_name = str(os.popen("networksetup -getairportnetwork en0 | awk -F\": \" '{print $2}'").read()).strip()
+    wifi_name = ""
+    # TODO: Add methods to get current WiFi network name for other platforms.
+    if sys.platform == 'darwin':
+        wifi_name = str(os.popen("networksetup -getairportnetwork en0 | awk -F\": \" '{print $2}'").read()).strip()
 
     # Start monitor so we can check for abort request.
     xbmc_monitor = xbmc.Monitor()
