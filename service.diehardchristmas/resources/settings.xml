@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="32001">
+        <setting label="32004" type="bool" id="dhc_combos" default="true" />
+        <setting label="32005" type="bool" id="dhc_show_total" default="true" />
+		<setting label="32002" type="slider" id="dhc_total_counter_position" default="700" range="0,1,1080" option="int" />
+        <setting type="sep"/>
+        <setting label="32006" type="bool" id="dhc_show_notifications" default="true" />
+        <setting label="32007" type="slider" id="dhc_notification_position" default="700" range="0,1,1080" option="int" />
+        <setting label="32009" type="slider" id="dhc_notification_decay_time" default="5" range="0,1,60" option="int" />
+        <setting type="sep"/>
+		<setting label="32008" type="bool" id="dhc_show_border_effect" default="true" />
+    </category>
+    <category label="32013">
+		<setting label="32010" type="number" id="dhc_webserver_port" default="8000" option="int" />
+        <setting type="sep"/>
+        <setting label="32011" type="ipaddress" id="dhc_hyperion_address" default="" />
+        <setting label="32012" type="number" id="dhc_hyperion_port" default="19444" option="int" />
+    </category>
+</settings>

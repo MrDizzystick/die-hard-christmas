@@ -1,0 +1,416 @@
+## -*- coding: utf-8 -*-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width">
+    <title>Die Hard Christmas</title>
+    <!--<link rel="stylesheet" href="css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="css/bootstrap-darkly.min.css">
+    <link rel="stylesheet" href="css/roboto.min.css">
+    <link rel="stylesheet" href="css/chartist.min.css">
+    <style>
+        #mini-drink-chart .ct-series-a .ct-line {
+            /* Set the colour of this series line */
+            stroke: green;
+            /* Control the thickness of your lines */
+            stroke-width: 3px;
+            /* Create a dashed line with a pattern */
+            /*stroke-dasharray: 10px 20px;*/
+        }
+
+        #mini-drink-chart .ct-series-a .ct-point {
+            /* Colour of your points */
+            stroke: red;
+            /* Size of your points */
+            stroke-width: 7px;
+            /* Make your points appear as shapes */
+            stroke-linecap: circle;
+        }
+
+        #mini-drink-chart .ct-series-a .ct-area {
+            fill: white;
+        }
+
+        .ct-grids line {
+            stroke: dimgray;
+        }
+
+        .ct-labels span {
+            color: gray;
+        }
+
+        body {
+            font-family: 'RobotoDraft';
+        }
+
+        .navbar-collapse { max-height: 100% !important; }
+        .navbar .glyphicon { margin-right: 5px; }
+        .navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus { color: #ffffff; }
+
+        /*#dhc-title {
+            display: block;
+            width: 181px;
+            height: 40px;
+        }*/
+
+        #nakatomi-map {
+            height: 70vh;
+            background-image: url(/img/map/default.png);
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+</head>
+<body style="height: 100vh; padding-top: 70px;">
+
+    <nav class="navbar navbar-default navbar-fixed-top" style="margin-bottom: 0;">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <!--<img class="navbar-brand" id="dhc-title" alt="Die Hard Christmas" src="img/dhc-logo-top.png">-->
+                <span class="navbar-brand" id="dhc-title">Die Hard Christmas</span>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1">
+                <!--<div class="container-fluid">-->
+                    <div class="row text-center" style="margin-top: 10px;">
+                        <p class="col-xs-12" onclick="$('#device-id-modal').modal();">You are: <strong><span class="username-here">${username}</span></strong></p>
+                    </div>
+                    <!--
+                    <div class="row" style="margin-bottom: 10px;">
+                        <div class="col-xs-12"><a class="btn btn-sm btn-block btn-info" id="toggle_fullscreen" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span> Toggle Full Screen</a></div>
+                    </div>
+                    -->
+                    <div class="row" style="margin-bottom: 10px;" class="collapsed">
+                        <div class="col-xs-12"><a class="btn btn-block btn-info" id="show_home_page" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a></div>
+                    </div>
+                    <div class="row" style="margin-bottom: 10px;">
+                        <div class="col-xs-12"><a class="btn btn-block btn-info" id="show_stats_page" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Graphs &amp; Statistics</a></div>
+                    </div>
+                    <div class="row" style="margin-bottom: 10px;">
+                        <div class="col-xs-12"><a class="btn btn-block btn-info" id="show_map_page" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Nakatomi Map</a></div>
+                    </div>
+                    % if is_admin:
+                    <div class="row" style="margin-bottom: 10px;">
+                        <div class="col-xs-12"><a class="btn btn-block btn-info" id="show_admin_page" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Admin</a></div>
+                    </div>
+                    <div class="row" style="margin-bottom: 10px;">
+                        <div class="col-xs-6"><a class="btn btn-sm btn-block btn-info" id="fun_snow"><span class="glyphicon glyphicon-cloud" aria-hidden="true"></span> Toggle Snow</a></div>
+                        <div class="col-xs-6"><a class="btn btn-sm btn-block btn-info" id="fun_skill_test"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Toggle Skill Question</a></div>
+                    </div>
+                    <div class="row" style="margin-bottom: 10px;">
+                        <div class="col-xs-6"><a class="btn btn-sm btn-block btn-info" id="fun_brac_logging"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Toggle BRAC Logging</a></div>
+                        <div class="col-xs-6"><a class="btn btn-sm btn-block btn-info" id="fun_led_lighting"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span> Toggle LED Lighting</a></div>
+                    </div>
+                    % endif
+                <!--</div>-->
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+
+        <div id="view-main">
+            <!-- Initial greeting message shown after loggin in, but when movie us not playing. -->
+            <div class="row collapse" id="thank-user-mingle" style="margin-top: 15px;">
+                <div class="col-xs-12">
+                    <p>Thanks, <span class="username-here">${username}</span>. You're good to go.</p>
+                    <p>Relax and mingle for now. Come back here when the main event begins.</p>
+                    <p class="text-muted">Consider charging your device while you wait.</p>
+                </div>
+            </div>
+
+            <!-- Mini, simplified drink total chart. Possibly add average BRAC of all users over time? -->
+            <div class="row collapse" id="mini-drink-chart-div">
+                <div class="col-xs-12">
+                    <p class="text-center" style="font-weight: bold; border-bottom: 1px solid gray;">Total Drinks Over Time (5 min Steps)</p>
+                    <div id="mini-drink-chart" style="height: 80px;"></div>
+                </div>
+            </div>
+
+            <!-- Middle drink stats section. -->
+            <div class="row text-center collapse" id="drink-total-next">
+                <div class="col-xs-4">
+                    <!-- Total Drink Counter -->
+                    <p style="font-weight: bold; border-bottom: 1px solid gray;">Drink Total</p>
+                    <p id="drink-total-value" style="font-size: 1.5em;"></p>
+                </div>
+                <div class="col-xs-4">
+                    <!-- "Next Drink" counter is toggleable, user preference. -->
+                    <p id="next-drink-display-toggle" style="font-weight: bold; border-bottom: 1px solid gray;">Next Drink</p>
+                    <p id="next-drink-value" style="font-size: 1.5em;"></p>
+                </div>
+                <div class="col-xs-4">
+                    <!-- "Drink Rate" -->
+                    <p style="font-weight: bold; border-bottom: 1px solid gray;">Per Min.</p>
+                    <p id="drink-rate-value" style="font-size: 1.5em;">N/A</p>
+                </div>
+            </div>
+
+            <!-- Recent drinks list. -->
+            <div class="row collapse" id="recent-drinks">
+                <div class="col-xs-12">
+                    <p class="text-center" style="font-weight: bold; border-bottom: 1px solid gray;">Recent Drink Events</p>
+                    <div id="recent-drink-list"></div>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="row" style="position: absolute; bottom: 0; width: 100vw; padding: 10px; background: #222222; border-top: 1px solid #404040;">
+                <!-- Notification shown on connection failure. -->
+                <div id="alert-no-server" class="alert alert-danger text-center collapse" style="margin-bottom: 0;">
+                    Unable to connect, but will keep trying&hellip;
+                </div>
+
+                <!-- Standard "Piss Break" and "That's a Drink" buttons. -->
+                <div id="drink-piss-buttons" class="collapse">
+                    <div id="piss-break-button-div" class="col-xs-4" style="padding-left: 0; padding-right: 5px;">
+                        <button id="piss-break-button" class="btn btn-sm btn-block btn-primary text-uppercase"
+                        style="z-index: 2; font-weight: bold; font-size: 0.75em;"><span style="line-height: 1.25em;">Take a Piss<br><span style="font-size: 1.5em;">Break</span></span></button>
+                    </div>
+                    <!-- "Fun" option for recording BRAC. Modify column sizes when showing/hiding button. -->
+                    <div id="update-brac-button-div" class="col-xs-4 collapse" style="padding-left: 0; padding-right: 0;">
+                        <button id="update-brac-button" class="btn btn-sm btn-block btn-primary text-uppercase"
+                        style="z-index: 2; font-weight: bold; font-size: 0.75em;"><span style="line-height: 1.25em;">Update my<br><span style="font-size: 1.5em;">BRAC</span></span></button>
+                    </div>
+                    <div id="thats-a-drink-button-div" class="col-xs-4" style="padding-left: 5px; padding-right: 0;">
+                        <button id="thats-a-drink-button" class="btn btn-sm btn-block btn-primary text-uppercase"
+                        style="z-index: 2; font-weight: bold; font-size: 0.75em;"><span style="line-height: 1.25em;">That's a<br><span style="font-size: 1.5em;">Drink!</span></span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-stats" class="collapse">
+            <!-- TODO: These charts may need to be of fixed height to prevent them from shifting around as data changes? -->
+            <!-- TODO: Make each chart toggleable by tapping header? -->
+            <div class="row">
+                <div class="col-xs-12">
+                    <p class="text-center">Top 10 Drink Types by Number of Occurrences</p>
+                    <div id="chart-drinks-by-type"></div>
+                </div>
+            </div>
+            <!--<div class="row">
+                <div class="col-xs-12">
+                    <p class="text-center">Number of Drinks by Type Over Time (stacked bar/area chart?)</p>
+                    <div id="chart-drinks-by-type-hourly"></div>
+                </div>
+            </div>-->
+            <div class="row">
+                <div class="col-xs-12">
+                    <p class="text-center">Number of Drinks by Location</p>
+                    <div id="chart-drinks-by-location"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <p class="text-center">Total Drinks Submitted by User</p>
+                    <div id="chart-drinks-submitted-by-user"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <p class="text-center">Total Piss Breaks by User</p>
+                    <div id="chart-number-of-piss-breaks-by-user"></div>
+                </div>
+            </div>
+            <!--
+            <div class="row">
+                <div class="col-xs-12">
+                    <p class="text-center">Cumulative Time Spent on Piss Break by User (pie chart?)</p>
+                    <div id="chart-time-on-piss-break-by-user"></div>
+                </div>
+            </div>
+            -->
+        </div>
+
+        <div id="view-nakatomi-map" class="collapse">
+            <div class="row">
+                <div class="col-xs-12">
+                    <p class="text-center">Map of Nakatomi Plaza</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <!-- TODO: Combine all maps into single image and use CSS positioning? Or can we pre-load images somehow? -->
+                    <div id="nakatomi-map"></div>
+                </div>
+            </div>
+        </div>
+
+        % if is_admin:
+        <div id="view-admin" class="collapse">
+            <div class="row">
+                <div class="col-xs-12">
+                    <p class="text-muted text-center small">These actions verify admin status on the server before they execute.</p>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 10px;">
+                <div class="col-xs-12 text-center">
+                    <button class="btn btn-default" id="admin-playback-start"><span class="glyphicon glyphicon-play"></span> Start</button>
+                    <button class="btn btn-default" id="admin-playback-pause"><span class="glyphicon glyphicon-pause"></span> Pause</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    <button class="btn btn-default" id="admin-manage-users">Users</button>
+                    <button class="btn btn-default" id="admin-manage-drinks">Drinks</button>
+                    <button class="btn btn-default" id="admin-manage-brac">BRAC</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12" id="admin-content" style="padding: 10px; border: 1px solid dimgray;">
+                    <p class="text-muted text-center small">Select an option from above.</p>
+                    <table class="table table-condensed table-striped table-bordered small">
+                        <tr><th>ID</th><th>Name</th><th>Del</th></tr>
+                        <tr><td>1</td><td>Test<br><span class="small">UUID HERE</span></td><td><button class="btn btn-xs btn-danger">×</button></td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        % endif
+
+        <!-- Skill-Testing Question Modal -->
+        <!-- e.g. "How many times has McClane talked to himself?", "How many fingers am I holding up?", "Are you drunk?" -->
+        <div id="skill-test-modal" class="modal fade" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">Skill-Testing Question</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted">Sorry, you gotta prove you're qualified to know whether that was <em>really</em> a drink&hellip;</p>
+                        <span>How many fingers am I holding up?</span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary fake-question-button" data-dismiss="modal">One</button>
+                        <button type="button" class="btn btn-primary fake-question-button" data-dismiss="modal">Eight</button>
+                        <button type="button" class="btn btn-primary fake-question-button" data-dismiss="modal">Eleven</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slow Down Modal -->
+        <div id="slow-down-modal" class="modal fade" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">Slow Down!</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Don't submit a drink request so soon after your last one, OK?</p>
+                        <span class="text-muted">(It's only a five-second cooldown&hellip;)</span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">I Promise</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Piss Break Modal -->
+        <div id="piss-break-modal" class="modal fade" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Piss Break Started</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>OK, you're on a piss break. We'll keep track of your drink debt for you.</p>
+                        <p>When you're back, tap "Piss Finished".</p>
+                        <!--<p class="text-muted">Remember to wash your hands&hellip;!</p>-->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="piss-break-finished">Piss Finished</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Piss Break Debt Modal -->
+        <div id="piss-break-debt-modal" class="modal fade" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">Your Drink Debt</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-center">You missed:</p>
+                        <h2 class="text-center"><strong><span id="piss-break-debt-count">12 drinks</span></strong></h2>
+                        <p class="text-center">Enjoy!</p>
+                        <!--<p class="text-muted">Remember to wash your hands&hellip;!</p>-->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="$('#piss-break-button').prop('disabled', false);">Bottoms Up</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update BRAC Modal -->
+        <!-- TODO: If above a certain number, display a message: "Whoa, you definitely shouldn't be driving anywhere tonight." -->
+        <div id="update-brac-modal" class="modal fade" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">Update your BRAC</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-center">My breath alcohol content is:</p>
+                        <div class="form-group">
+                            <input class="form-control" id="brac_value" name="brac_value" type="number" placeholder="Enter it here" required title="Put something in here!">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="submit-brac-button" data-dismiss="modal" onclick="$('#update-brac-button').prop('disabled', false);">Here you are, occifer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Device ID modal -->
+        <div id="device-id-modal" class="modal fade" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">Device ID</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-center">Your Device ID is:</p>
+                        <h3 class="text-center">${device_id}</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cool, thanks</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="snow-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:-1;"></canvas>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-modal-vcenter.js"></script>
+    <script src="js/chartist.min.js"></script>
+    <script src="js/cookies.js"></script>
+    <script src="js/websnowjq.js"></script>
+    <script src="js/dhc-app.js"></script>
+</body>
+</html>

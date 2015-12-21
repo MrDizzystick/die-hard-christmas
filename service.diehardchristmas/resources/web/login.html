@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width">
+    <title>Die Hard Christmas</title>
+    <!--<link rel="stylesheet" href="css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="css/bootstrap-darkly.min.css">
+    <link rel="stylesheet" href="css/roboto.min.css">
+    <style>
+        body {
+            height: 100vh;
+            font-family: 'RobotoDraft';
+        }
+
+        #login-main {
+            background-image: url(/img/dhc-logo-colour-8.png);
+            background-size: 250px;
+            background-repeat: no-repeat;
+            background-position: center top;
+            padding-top: 85px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Die Hard Christmas</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container" id="login-main">
+        <!--<h2>Welcome</h2>-->
+        <form method="post" action="/">
+            <p>Please enter your name so that we can give it to the paramedics later.</p>
+            <div class="form-group">
+                <input class="form-control" id="user_name" name="user_name" type="text" placeholder="Your name here" required pattern="\S.*\S" title="Be a sport, enter a name!">
+                <!-- TODO: Maybe separate first/last names into fields, then require both fields.
+                This will hopefully minimize two people entering the same name, and lets those who
+                do have the same name (e.g. Ross + Ross) be able to be identified properly by others. -->
+            </div>
+            <div class="form-group collapse" id="admin-check">
+                <input class="form-control" id="admin_pass" name="admin_pass" type="password" placeholder="Prove it, smart guy">
+            </div>
+            <div class="form-group pull-right">
+                <button type="submit" class="btn btn-primary">OK</button>
+                <!-- TODO: Check if name is already in use by someone else? -->
+            </div>
+        </form>
+    </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <!--<script src="js/cookies.js"></script>-->
+    <script>
+        $(document).ready(function () {
+            $("#user_name").keyup(adminNameCheck);
+            function adminNameCheck() {
+                var username = $("#user_name").val().toLowerCase();
+                if (username.indexOf("kyton") >= 0 || username.indexOf("kytro") >= 0) {
+                    $("#admin_pass").prop('required', true);
+                    $("#admin-check").fadeIn('fast');
+                } else {
+                    $("#admin_pass").val('');
+                    $("#admin_pass").prop('required', false);
+                    $("#admin-check").fadeOut('fast');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

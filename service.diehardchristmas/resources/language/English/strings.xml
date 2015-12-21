@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+    <string id="32001">General</string>
+    <string id="32002">"Total Drink" counter position (in pixels)</string>
+    <string id="32004">Combos</string>
+    <string id="32005">Show "Total Drink" count</string>
+    <string id="32006">Show notifications</string>
+    <string id="32007">Notification position (in pixels)</string>
+    <string id="32008">Border effect on drink event</string>
+    <string id="32009">Notification decay time (in seconds)</string>
+	<string id="32010">Web server port</string>
+    <string id="32011">Hyperion server address</string>
+    <string id="32012">Hyperion server port</string>
+    <string id="32013">Servers</string>
+</strings>
