@@ -55,6 +55,7 @@ fun_snow = False
 fun_brac_logging = False
 fun_led_lighting = True
 
+
 def main():
     global diehard_is_playing
     global fun_skill_test
@@ -228,7 +229,8 @@ def main():
 
             client_device_id = self.get_cookie("device_id")
             xbmc_log(
-                "Got device_id cookie value: {0}, which is type: {1}".format(client_device_id, type(client_device_id)))
+                    "Got device_id cookie value: {0}, which is type: {1}".format(client_device_id,
+                                                                                 type(client_device_id)))
 
             submitted_user_name = user_name
 
@@ -237,7 +239,8 @@ def main():
                 submitted_user_name = str(submitted_user_name).strip()  # Remove excess whitespace.
                 new_device_id = generate_id()
                 xbmc_log(
-                    "Received user name of \"{0}\" for device ID \"{1}\".".format(submitted_user_name, new_device_id))
+                        "Received user name of \"{0}\" for device ID \"{1}\".".format(submitted_user_name,
+                                                                                      new_device_id))
                 # Update name for respective device ID entry.
                 proceed_to_main_page = False
                 is_admin = False
@@ -252,7 +255,7 @@ def main():
                         proceed_to_main_page = True
                     else:
                         xbmc_log("Some phoney tried to log in as admin - username: \"{0}\", pass: \"{1}\".".format(
-                            submitted_user_name, admin_pass))
+                                submitted_user_name, admin_pass))
                 else:
                     # Any other username.
                     sql = "UPDATE users SET name = ? WHERE device_id = ?"
@@ -279,7 +282,8 @@ def main():
                     # Handle edge case where user presents invalid device ID which results in 0 matches.
                     # Clear invalid cookie and redirect client to main route again so they can login properly.
                     xbmc_log(
-                        "Unknown UUID \"{0}\" was used by client. Redirecting to login page.".format(client_device_id))
+                            "Unknown UUID \"{0}\" was used by client. Redirecting to login page.".format(
+                                    client_device_id))
                     self.delete_cookie("device_id")
                 else:
                     # TODO: Make sure only one matching user is allowed per UUID.
@@ -296,9 +300,10 @@ def main():
                     if retreived_user_name is not None:
                         # User has device ID and name, send them to the main page.
                         xbmc_log(
-                            "Main page view by \"{0}\" (ID: {1}) from device ID \"{2}\".".format(retreived_user_name,
-                                                                                                 retreived_id,
-                                                                                                 client_device_id))
+                                "Main page view by \"{0}\" (ID: {1}) from device ID \"{2}\".".format(
+                                        retreived_user_name,
+                                        retreived_id,
+                                        client_device_id))
                         template = webapp_template_lookup.get_template('main.html')
                         response = template.render(username=retreived_user_name, device_id=client_device_id,
                                                    is_admin=is_admin)
@@ -342,7 +347,7 @@ def main():
             # Time until next drink
             next_drink = {"next_drink": 0}  # Default next drink time.
             if diehard_is_playing:
-                sql = "SELECT event_time FROM drink_events WHERE event_time > ?"
+                sql = "SELECT event_time FROM drink_events WHERE event_time > ? ORDER BY event_time ASC LIMIT 1"
                 params = [real_playback_time]
                 next_drink_result = db.query(sql, params).fetchone()
                 if next_drink_result is not None:
@@ -359,16 +364,16 @@ def main():
             recent_drink_result_list = []
             for record in recent_drink_result:
                 recent_drink_result_list.append(
-                    {
-                        "id": record['id'],
-                        "event_reason": get_reason_text(record['event_reason']),
-                        "executed_at": "{t:%I:%M:%S %p}".format(t=record['executed_at']).lstrip('0')
-                    }
+                        {
+                            "id": record['id'],
+                            "event_reason": get_reason_text(record['event_reason']),
+                            "executed_at": "{t:%I:%M:%S %p}".format(t=record['executed_at']).lstrip('0')
+                        }
                 )
             if len(recent_drink_result_list) == 0:
                 recent_drink_result_list = [{"event_reason": "None",
                                              "executed_at": "{t:%I:%M:%S %p}".format(t=datetime.datetime.now()).lstrip(
-                                                 '0')}]  # Blank recent drink list
+                                                     '0')}]  # Blank recent drink list
 
             # Recent drink list gets latest 3 entries currently.
             recent_drink_list = {"recent_list": recent_drink_result_list}
@@ -391,7 +396,8 @@ def main():
             # Get execute_at of first and last drinks, then divide by total.
             # TODO: Change this to: get movie start time, get current time, calculate difference, divide total drink count by minutes passed.
             drinks_per_minute = {"drinks_per_minute": 0}
-            movie_start_time = db.query("SELECT action_time FROM users_history WHERE action_type = 'movie_start' ORDER BY action_time DESC LIMIT 1").fetchone()
+            movie_start_time = db.query(
+                    "SELECT action_time FROM users_history WHERE action_type = 'movie_start' ORDER BY action_time DESC LIMIT 1").fetchone()
             xbmc_log("movie_start_time={0}".format(movie_start_time))
             if movie_start_time is not None and len(movie_start_time) > 0:
                 total_difference = datetime.datetime.now() - movie_start_time['action_time']
@@ -524,7 +530,8 @@ def main():
                     for result in results:
                         labels.append(result['name'])
                         series.append(result['cnt'])
-            chart_number_of_piss_breaks_by_user = {"chart_number_of_piss_breaks_by_user": {"labels": labels, "series": series}}
+            chart_number_of_piss_breaks_by_user = {
+                "chart_number_of_piss_breaks_by_user": {"labels": labels, "series": series}}
 
             # Piss break stats
             # chart_piss_break_count_by_user = {"chart_piss_break_count_by_user": {"labels": ["N/A"], "series": [0]}}
@@ -568,7 +575,8 @@ def main():
             db = DatabaseManager(database_file)
             client_device_id = self.get_cookie("device_id")  # Get cookie if it exists.
             xbmc_log(
-                "Processing action request of \"{0}\" from UUID \"{1}\"...".format(action_request, client_device_id))
+                    "Processing action request of \"{0}\" from UUID \"{1}\"...".format(action_request,
+                                                                                       client_device_id))
             response = {"ok": False, "reason": "bad"}
 
             # Verify cookie exists in database, if not then dismiss request.
@@ -583,7 +591,7 @@ def main():
                     params = [user_info[0]['id'], datetime.datetime.now() - datetime.timedelta(seconds=5)]
                     drink_request_info = db.query(sql, params).fetchall()
                     xbmc_log("User is making a drink request, they have made {0} recently...".format(
-                        len(drink_request_info)))
+                            len(drink_request_info)))
                     # for request in drink_request_info:
                     #     xbmc_log("id: {0}".format(request[0]))
 
@@ -596,8 +604,8 @@ def main():
                         response = {"ok": True}
                     else:
                         xbmc_log(
-                            "Denying drink request from user with UUID \"{0}\": too soon after last request.".format(
-                                client_device_id))
+                                "Denying drink request from user with UUID \"{0}\": too soon after last request.".format(
+                                        client_device_id))
                         response = {"ok": False, "reason": "spam"}
 
                 elif action_request == "piss_break":
@@ -660,7 +668,9 @@ def main():
                         if xbmc.Player().isPlaying():
                             xbmc.Player().seekTime(0)
                         xbmc.Player().play(os.path.join(this_addon_path, "resources", "data", "Die Hard.mkv"))
-                        db.query("INSERT INTO users_history (user_id, action_type, action_time) VALUES (1, 'movie_start', ?)", [datetime.datetime.now()])
+                        db.query(
+                                "INSERT INTO users_history (user_id, action_type, action_time) VALUES (1, 'movie_start', ?)",
+                                [datetime.datetime.now()])
 
                 elif action_request == "admin_playback_pause":
                     if user_info[0]['is_admin'] and xbmc.Player().isPlaying():
@@ -695,14 +705,14 @@ def main():
 
                 else:
                     xbmc_log("Received unknown action type \"{0}\" from user with UUID \"{1}\". Ignoring...".format(
-                        action_request, client_device_id))
+                            action_request, client_device_id))
             elif len(user_info) > 1:
                 xbmc_log(
-                    "Received action request from a UUID with multiple matching users: \"{0}\"! Ignoring...".format(
-                        client_device_id))
+                        "Received action request from a UUID with multiple matching users: \"{0}\"! Ignoring...".format(
+                                client_device_id))
             else:
                 xbmc_log("Received invalid action request from non-existent UUID \"{0}\". Ignoring...".format(
-                    client_device_id))
+                        client_device_id))
 
             return response
 
@@ -745,7 +755,7 @@ def main():
     # Greeting message before movie playback, during music visualization. Displays IP address for users to connect to.
     dhc_greeting_vis_label = xbmcgui.ControlLabel(652, 353, 527, 214,
                                                   "Connect to this Wi-Fi network:\n\"{0}\"\n\nPoint your browser to:\nhttp://{1}/\n({2})".format(
-                                                      wifi_name, hostname, ipaddress), alignment=6,
+                                                          wifi_name, hostname, ipaddress), alignment=6,
                                                   textColor='0xFFFFFFFF', font='font30')
     dhc_greeting_vis_image = xbmcgui.ControlImage(0, 0, dhc_window_width, dhc_window_height,
                                                   os.path.join(imgdir, "lobby-bg-8.png"), colorDiffuse='0xFFFFFFFF')
@@ -910,14 +920,14 @@ def main():
         # Server config is separate from application config.
         # Set port, disable log output, disable auto-reload.
         cherrypy.config.update(
-            {
-                'server.socket_host': '0.0.0.0',
-                'server.socket_port': int(this_addon.getSetting("dhc_webserver_port")),
-                'log.screen': True,
-                'engine.autoreload.on': False,
-                'response.timeout': 3  # The number of seconds to allow responses to run (default: 300).
-                # 'engine.timeout_monitor.on': False  # TODO: Does this actually help with CherryPy shutdown?
-            }
+                {
+                    'server.socket_host': '0.0.0.0',
+                    'server.socket_port': int(this_addon.getSetting("dhc_webserver_port")),
+                    'log.screen': True,
+                    'engine.autoreload.on': False,
+                    'response.timeout': 3  # The number of seconds to allow responses to run (default: 300).
+                    # 'engine.timeout_monitor.on': False  # TODO: Does this actually help with CherryPy shutdown?
+                }
         )
         cherrypy.engine.start()
         xbmc_log("Web server started.")
@@ -997,7 +1007,9 @@ def main():
                     if light_segment_upper.getPosition()[1] < light_segment_upper_in_y:
                         # Move toward target position.
                         target_ypos_upper = light_segment_upper.getPosition()[1] + int(
-                            math.ceil(float(abs(light_segment_upper.getPosition()[1] - light_segment_upper_in_y)) / 30.0))
+                                math.ceil(
+                                        float(abs(
+                                            light_segment_upper.getPosition()[1] - light_segment_upper_in_y)) / 30.0))
                     else:
                         # Set position to final target location.
                         target_ypos_upper = int(light_segment_upper_in_y)
@@ -1005,7 +1017,8 @@ def main():
                     if light_segment_upper.getPosition()[1] > light_segment_upper_out_y:
                         # Move toward target position.
                         target_ypos_upper = light_segment_upper.getPosition()[1] - int(
-                            math.ceil(float(abs(light_segment_upper.getPosition()[1] - light_segment_upper_out_y)) / 30.0))
+                                math.ceil(float(
+                                        abs(light_segment_upper.getPosition()[1] - light_segment_upper_out_y)) / 30.0))
                     else:
                         # Set position to final target location.
                         target_ypos_upper = int(light_segment_upper_out_y)
@@ -1022,7 +1035,9 @@ def main():
                     if light_segment_lower.getPosition()[1] > light_segment_lower_in_y:
                         # Move toward target position.
                         target_ypos_lower = light_segment_lower.getPosition()[1] - int(
-                            math.ceil(float(abs(light_segment_lower.getPosition()[1] - light_segment_lower_in_y)) / 30.0))
+                                math.ceil(
+                                        float(abs(
+                                            light_segment_lower.getPosition()[1] - light_segment_lower_in_y)) / 30.0))
                     else:
                         # Set position to final target location.
                         target_ypos_lower = int(light_segment_lower_in_y)
@@ -1030,7 +1045,8 @@ def main():
                     if light_segment_lower.getPosition()[1] < light_segment_lower_out_y:
                         # Move toward target position.
                         target_ypos_lower = light_segment_lower.getPosition()[1] + int(
-                            math.ceil(float(abs(light_segment_lower.getPosition()[1] - light_segment_lower_out_y)) / 30.0))
+                                math.ceil(float(
+                                        abs(light_segment_lower.getPosition()[1] - light_segment_lower_out_y)) / 30.0))
                     else:
                         # Set position to final target location.
                         target_ypos_lower = int(light_segment_lower_out_y)
@@ -1043,21 +1059,21 @@ def main():
 
             # Percentage of how far along in the into/out of frame transition we are in (0.0 = out, to 1.0 = in).
             transition_position = (float(dhc_deco_lights_top_a.getPosition()[1] - light_segment_upper_out_y) / float(
-                light_segment_upper_in_y - light_segment_upper_out_y))
+                    light_segment_upper_in_y - light_segment_upper_out_y))
 
             # Upper holly
             for holly_upper in [dhc_deco_holly_top_left, dhc_deco_holly_top_right]:
                 holly_upper.setPosition(holly_upper.getPosition()[0],
                                         dhc_deco_lights_top_a.getPosition()[1])  # Snap vertical position to lights.
                 holly_upper.setColorDiffuse('0x{0}BBBBBB'.format(
-                    hex(int(transition_position * 255))[2:].upper()))  # Fade alpha based on position in transition.
+                        hex(int(transition_position * 255))[2:].upper()))  # Fade alpha based on position in transition.
 
             # Lower holly
             for holly_lower in [dhc_deco_holly_bottom_left, dhc_deco_holly_bottom_right]:
                 holly_lower.setPosition(holly_lower.getPosition()[0], dhc_deco_lights_bottom_a.getPosition()[
                     1] + dhc_deco_lights_bottom_a.getHeight() - holly_lower.getHeight())  # Snap vertical position to lights.
                 holly_lower.setColorDiffuse('0x{0}BBBBBB'.format(
-                    hex(int(transition_position * 255))[2:].upper()))  # Fade alpha based on position in transition.
+                        hex(int(transition_position * 255))[2:].upper()))  # Fade alpha based on position in transition.
 
         except Exception as e:
             xbmc_log("EXCEPTION: Could not update light segment decorations:")
@@ -1074,7 +1090,8 @@ def main():
             # Drink notification background.
             dhc_drink_notification_bg.setHeight(dhc_drink_notification_height * len(drink_event_list))
             dhc_drink_notification_bg.setPosition(dhc_drink_notification_bg.getPosition()[0],
-                                                  dhc_drink_notification_center_xy[1] + dhc_drink_notification_height - (
+                                                  dhc_drink_notification_center_xy[
+                                                      1] + dhc_drink_notification_height - (
                                                       dhc_drink_notification_height * len(drink_event_list)))
             if len(drink_event_list) > 0:
                 border_enabled = True
