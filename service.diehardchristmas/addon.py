@@ -835,11 +835,11 @@ def main():
                 self.total_time = self.end_time - self.start_time
                 self.remaining_time = self.end_time - datetime.datetime.now()
 
-                remaining_time_total_microseconds = (self.remaining_time.microseconds + (
+                self.remaining_time_total_microseconds = (self.remaining_time.microseconds + (
                     self.remaining_time.seconds + self.remaining_time.days * 24 * 3600) * 10 ** 6)  # / 10**6
-                total_time_total_microseconds = (self.total_time.microseconds + (
+                self.total_time_total_microseconds = (self.total_time.microseconds + (
                     self.total_time.seconds + self.total_time.days * 24 * 3600) * 10 ** 6)  # / 10**6
-                self.time_percentage = float(remaining_time_total_microseconds) / float(total_time_total_microseconds)
+                self.time_percentage = float(self.remaining_time_total_microseconds) / float(self.total_time_total_microseconds)
 
                 self.combo_count = 1
                 self.x = 0
@@ -868,8 +868,8 @@ def main():
             else:
                 # position = 0
                 if self in drink_event_list:
-                    position = drink_event_list.index(self)
-                    self.targety = dhc_drink_notification_center_xy[1] - (dhc_drink_notification_height * position)
+                    self.position = drink_event_list.index(self)
+                    self.targety = dhc_drink_notification_center_xy[1] - (dhc_drink_notification_height * self.position)
 
                 if abs(self.y - self.targety) < 2:
                     self.y = self.targety  # If close enough, just snap to final position.
@@ -880,11 +880,11 @@ def main():
                     self.y -= int(math.ceil(abs(float(self.y - self.targety)) / 12))  # Move up.
 
                 # self.time_percentage = self.remaining_time.total_seconds() / self.total_time.total_seconds()  # Only works in Python 2.7+.
-                remaining_time_total_microseconds = (self.remaining_time.microseconds + (
+                self.remaining_time_total_microseconds = (self.remaining_time.microseconds + (
                     self.remaining_time.seconds + self.remaining_time.days * 24 * 3600) * 10 ** 6)  # / 10**6
-                total_time_total_microseconds = (self.total_time.microseconds + (
+                self.total_time_total_microseconds = (self.total_time.microseconds + (
                     self.total_time.seconds + self.total_time.days * 24 * 3600) * 10 ** 6)  # / 10**6
-                self.time_percentage = float(remaining_time_total_microseconds) / float(total_time_total_microseconds)
+                self.time_percentage = float(self.remaining_time_total_microseconds) / float(self.total_time_total_microseconds)
 
                 self.colour = "0x{0:02X}{1}".format(int(self.time_percentage * 255), self.colour[4:])
                 # self.colour = "0xFFFFFFFF"
