@@ -918,7 +918,6 @@ def main():
     try:
         # Root access is required to bind ports < 1024 on Mac/Unix systems.
         # Port 8080 might be used by Kodi web server.
-        # TODO: Allow web server port to be defined in add-on settings.
         cherrypy.tree.mount(DieHardWebApp(), "/", config=diehard_webapp_config)
         # Server config is separate from application config.
         # Set port, disable log output, disable auto-reload.
